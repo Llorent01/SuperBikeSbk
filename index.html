@@ -20,7 +20,7 @@
     </div>
   </div>
 
-  <!-- OVERLAY CARRITO -->
+  <!-- OVERLAY GENERAL (carrito / comparador) -->
   <div id="cart-overlay" onclick="cerrarCarrito()"></div>
 
   <!-- SIDEBAR CARRITO -->
@@ -35,10 +35,95 @@
         <span>Total:</span>
         <span id="carrito-total-valor">$0</span>
       </div>
-      <button class="btn-checkout" onclick="checkout()">Finalizar compra</button>
+      <button class="btn-checkout" onclick="abrirCheckout()">Finalizar compra</button>
     </div>
   </aside>
 
+  <!-- MODAL CHECKOUT -->
+  <div id="modal-checkout" class="modal">
+    <div class="modal-contenido checkout-contenido">
+      <button class="cerrar" onclick="cerrarCheckout()">✖</button>
+      <h2>📋 Datos de entrega</h2>
+      <p class="checkout-sub">Completa tu información para confirmar el pedido</p>
+      <form id="form-checkout">
+        <input type="text"  name="co_nombre"    placeholder="Nombre completo"   required>
+        <input type="tel"   name="co_telefono"  placeholder="Teléfono"          required>
+        <input type="email" name="co_email"     placeholder="Correo electrónico" required>
+        <input type="text"  name="co_ciudad"    placeholder="Ciudad"            required>
+        <input type="text"  name="co_direccion" placeholder="Dirección"         required>
+        <textarea name="co_nota" placeholder="Nota adicional (opcional)" rows="3"></textarea>
+        <div id="checkout-resumen"></div>
+        <button type="submit" class="btn-confirmar">✅ Confirmar pedido</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL CONFIRMACIÓN ANIMADA -->
+  <div id="modal-confirmacion" class="modal">
+    <div class="modal-contenido confirmacion-contenido">
+      <div class="confetti-wrap" id="confetti-wrap"></div>
+      <div class="check-circle">
+        <svg viewBox="0 0 52 52" class="check-svg">
+          <circle class="check-circulo" cx="26" cy="26" r="25" fill="none"/>
+          <path   class="check-marca"   fill="none" d="M14 27 l8 8 16-16"/>
+        </svg>
+      </div>
+      <h2 class="confirmacion-titulo">¡Pedido confirmado!</h2>
+      <p class="confirmacion-sub">Gracias por tu compra. Un asesor de <strong>SuperBikeSBK</strong> se pondrá en contacto contigo pronto.</p>
+      <button onclick="cerrarConfirmacion()">Volver al catálogo</button>
+    </div>
+  </div>
+
+  <!-- MODAL DETALLES / GALERÍA -->
+  <div id="modal" class="modal">
+    <div class="modal-contenido">
+
+      <!-- Botón cerrar — esquina superior derecha -->
+      <button class="cerrar" onclick="cerrarModal()">✖</button>
+
+      <!-- Columna izquierda: imagen + galería -->
+      <div class="modal-col-img">
+        <button class="galeria-btn galeria-prev" onclick="galeriaNav(-1)">&#8592;</button>
+        <img id="modal-img" alt="Foto de la moto">
+        <button class="galeria-btn galeria-next" onclick="galeriaNav(1)">&#8594;</button>
+        <div class="galeria-dots" id="galeria-dots"></div>
+      </div>
+
+      <!-- Columna derecha: info + specs + botones -->
+      <div class="modal-col-info">
+        <h2 id="modal-nombre"></h2>
+        <h3 id="modal-precio"></h3>
+        <div class="specs-grid" id="modal-specs"></div>
+        <div class="modal-acciones">
+          <button class="btn-comprar" onclick="agregarAlCarrito(motoActual)">🛒 Agregar al carrito</button>
+          <button class="btn-comparar-modal" onclick="toggleComparador(motoActual)">⚖️ Comparar</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BARRA COMPARADOR -->
+  <div id="comparador-barra" class="comparador-barra">
+    <span class="comp-titulo">⚖️ Comparador</span>
+    <div id="comp-slots">
+      <div class="comp-slot" id="comp-slot-0"><span class="comp-empty">+ Moto 1</span></div>
+      <div class="comp-slot" id="comp-slot-1"><span class="comp-empty">+ Moto 2</span></div>
+    </div>
+    <button class="btn-ver-comparador" onclick="abrirComparadorModal()" id="btn-ver-comp" disabled>Ver comparación</button>
+    <button class="btn-limpiar-comp" onclick="limpiarComparador()">✖</button>
+  </div>
+
+  <!-- MODAL COMPARADOR -->
+  <div id="modal-comparador" class="modal">
+    <div class="modal-contenido comparador-contenido">
+      <button class="cerrar" onclick="cerrarComparadorModal()">✖</button>
+      <h2 class="comp-modal-titulo">⚖️ Comparación</h2>
+      <div id="tabla-comparador"></div>
+    </div>
+  </div>
+
+  <!-- HEADER -->
   <header>
     <div class="header-inner">
       <div class="logo-block">
@@ -61,21 +146,21 @@
   </nav>
 
   <section class="hero">
-    <div class="hero-content">
+    <div class="hero-content reveal">
       <h2>Las Superbikes más rápidas del mercado</h2>
       <p class="hero-sub">Potencia, velocidad y adrenalina pura</p>
     </div>
   </section>
 
   <section class="container">
-    <div class="section-header">
+    <div class="section-header reveal">
       <h2 id="catalogo">Catálogo</h2>
       <div class="section-line"></div>
     </div>
 
-    <!-- FILTROS -->
-    <div class="filtros-wrap">
+    <div class="filtros-wrap reveal">
       <input type="text" id="buscar" placeholder="🔍 Buscar moto...">
+
       <div class="filtros-marcas" id="filtros-marcas">
         <button class="filtro-btn activo" data-marca="todos">Todas</button>
         <button class="filtro-btn" data-marca="Yamaha">Yamaha</button>
@@ -84,42 +169,42 @@
         <button class="filtro-btn" data-marca="Ducati">Ducati</button>
         <button class="filtro-btn" data-marca="Honda">Honda</button>
       </div>
-      <div class="filtro-precio">
-        <label>Precio máximo: <strong id="precio-label">$200,000,000</strong></label>
-        <input type="range" id="slider-precio" min="60000000" max="200000000" step="5000000" value="200000000">
+
+      <div class="filtros-fila">
+        <div class="filtro-precio">
+          <label>Precio máximo: <strong id="precio-label">$200,000,000</strong></label>
+          <input type="range" id="slider-precio" min="60000000" max="200000000" step="5000000" value="200000000">
+        </div>
+        <div class="ordenar-wrap">
+          <label>Ordenar por:</label>
+          <select id="ordenar">
+            <option value="default">Predeterminado</option>
+            <option value="asc">Precio: menor a mayor</option>
+            <option value="desc">Precio: mayor a menor</option>
+            <option value="az">Nombre: A → Z</option>
+          </select>
+        </div>
       </div>
     </div>
 
     <div class="grid" id="motos"></div>
   </section>
 
-  <!-- MODAL -->
-  <div id="modal" class="modal">
-    <div class="modal-contenido">
-      <button class="cerrar" onclick="cerrarModal()">✖</button>
-      <img id="modal-img" alt="Foto de la moto">
-      <h2 id="modal-nombre"></h2>
-      <h3 id="modal-precio"></h3>
-      <div class="specs-grid" id="modal-specs"></div>
-      <button class="btn-comprar" onclick="agregarAlCarrito(motoActual)">🛒 Agregar al carrito</button>
-    </div>
-  </div>
-
   <section class="container">
-    <div class="section-header">
+    <div class="section-header reveal">
       <h2 id="contacto">Contacto</h2>
       <div class="section-line"></div>
     </div>
-    <form id="formulario">
-      <input type="text" name="nombre" placeholder="Nombre" required>
-      <input type="email" name="email" placeholder="Correo electrónico" required>
+    <form id="formulario" class="reveal">
+      <input type="text"  name="nombre"  placeholder="Nombre"             required>
+      <input type="email" name="email"   placeholder="Correo electrónico" required>
       <textarea name="mensaje" placeholder="Mensaje" rows="4"></textarea>
       <button type="submit">Enviar mensaje</button>
     </form>
   </section>
 
-  <footer>
-    <p>© 2026 <strong>SuperBikeSBK</strong> &mdash; Franklin Lloreda &amp; Jose Berrocal</p>
+  <footer class="reveal">
+    <p>© 2026 <strong>SuperBikeSBK</strong> &mdash; Jose Berrocal &amp; Franklin Lloreda</p>
   </footer>
 
   <button id="btn-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Volver arriba">▲</button>
