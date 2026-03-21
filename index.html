@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SuperBikeSBK</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- LOADER -->
+  <div id="loader">
+    <div class="loader-inner">
+      <div class="loader-logo">
+        <span class="logo-accent">SUPER</span><span class="logo-main">BIKE</span><span class="logo-sbk">SBK</span>
+      </div>
+      <div class="loader-bar"><div class="loader-fill"></div></div>
+      <p class="loader-text">Cargando experiencia...</p>
+    </div>
+  </div>
+
+  <!-- OVERLAY CARRITO -->
+  <div id="cart-overlay" onclick="cerrarCarrito()"></div>
+
+  <!-- SIDEBAR CARRITO -->
+  <aside id="carrito-sidebar">
+    <div class="carrito-header">
+      <h3>🛒 Mi Carrito</h3>
+      <button class="cerrar-carrito" onclick="cerrarCarrito()">✖</button>
+    </div>
+    <div id="carrito-items"></div>
+    <div class="carrito-footer">
+      <div class="carrito-total">
+        <span>Total:</span>
+        <span id="carrito-total-valor">$0</span>
+      </div>
+      <button class="btn-checkout" onclick="checkout()">Finalizar compra</button>
+    </div>
+  </aside>
+
+  <header>
+    <div class="header-inner">
+      <div class="logo-block">
+        <span class="logo-accent">SUPER</span><span class="logo-main">BIKE</span><span class="logo-sbk">SBK</span>
+      </div>
+      <p class="header-sub">Concesionario de motocicletas deportivas</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-tema" id="btn-tema" onclick="toggleTema()" title="Cambiar tema">🌙</button>
+      <button class="btn-carrito-header" onclick="abrirCarrito()">
+        🛒 <span id="carrito-count">0</span>
+      </button>
+    </div>
+  </header>
+
+  <nav>
+    <a href="#">Inicio</a>
+    <a href="#catalogo">Catálogo</a>
+    <a href="#contacto">Contacto</a>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-content">
+      <h2>Las Superbikes más rápidas del mercado</h2>
+      <p class="hero-sub">Potencia, velocidad y adrenalina pura</p>
+    </div>
+  </section>
+
+  <section class="container">
+    <div class="section-header">
+      <h2 id="catalogo">Catálogo</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <!-- FILTROS -->
+    <div class="filtros-wrap">
+      <input type="text" id="buscar" placeholder="🔍 Buscar moto...">
+      <div class="filtros-marcas" id="filtros-marcas">
+        <button class="filtro-btn activo" data-marca="todos">Todas</button>
+        <button class="filtro-btn" data-marca="Yamaha">Yamaha</button>
+        <button class="filtro-btn" data-marca="Kawasaki">Kawasaki</button>
+        <button class="filtro-btn" data-marca="BMW">BMW</button>
+        <button class="filtro-btn" data-marca="Ducati">Ducati</button>
+        <button class="filtro-btn" data-marca="Honda">Honda</button>
+      </div>
+      <div class="filtro-precio">
+        <label>Precio máximo: <strong id="precio-label">$200,000,000</strong></label>
+        <input type="range" id="slider-precio" min="60000000" max="200000000" step="5000000" value="200000000">
+      </div>
+    </div>
+
+    <div class="grid" id="motos"></div>
+  </section>
+
+  <!-- MODAL -->
+  <div id="modal" class="modal">
+    <div class="modal-contenido">
+      <button class="cerrar" onclick="cerrarModal()">✖</button>
+      <img id="modal-img" alt="Foto de la moto">
+      <h2 id="modal-nombre"></h2>
+      <h3 id="modal-precio"></h3>
+      <div class="specs-grid" id="modal-specs"></div>
+      <button class="btn-comprar" onclick="agregarAlCarrito(motoActual)">🛒 Agregar al carrito</button>
+    </div>
+  </div>
+
+  <section class="container">
+    <div class="section-header">
+      <h2 id="contacto">Contacto</h2>
+      <div class="section-line"></div>
+    </div>
+    <form id="formulario">
+      <input type="text" name="nombre" placeholder="Nombre" required>
+      <input type="email" name="email" placeholder="Correo electrónico" required>
+      <textarea name="mensaje" placeholder="Mensaje" rows="4"></textarea>
+      <button type="submit">Enviar mensaje</button>
+    </form>
+  </section>
+
+  <footer>
+    <p>© 2026 <strong>SuperBikeSBK</strong> &mdash; Franklin Lloreda &amp; Jose Berrocal</p>
+  </footer>
+
+  <button id="btn-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Volver arriba">▲</button>
+
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@2/dist/email.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
