@@ -1,188 +1,471 @@
 <!DOCTYPE html>
-<html lang="es" data-theme="light">
+<html lang="es" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SuperBikeSBK</title>
+  <title>SuperBikeSBK — High Performance Motorcycles</title>
   <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
   <!-- LOADER -->
   <div id="loader">
-    <div class="loader-inner">
-      <div class="loader-logo">
-        <span class="logo-accent">SUPER</span><span class="logo-main">BIKE</span><span class="logo-sbk">SBK</span>
-      </div>
-      <div class="loader-bar"><div class="loader-fill"></div></div>
-      <p class="loader-text">Cargando experiencia...</p>
+    <div class="loader-wrap">
+      <div class="loader-logo"><span class="lr">SUPER</span><span class="lw">BIKE</span><span class="lr">SBK</span></div>
+      <div class="loader-progress"><div class="loader-bar-fill"></div></div>
+      <p class="loader-status" id="loader-status">// INICIANDO SISTEMA</p>
     </div>
+    <div class="loader-grid"></div>
   </div>
 
-  <!-- OVERLAY GENERAL (carrito / comparador) -->
+  <!-- OVERLAY -->
   <div id="cart-overlay" onclick="cerrarCarrito()"></div>
+  <div id="modal-overlay"></div>
 
-  <!-- SIDEBAR CARRITO -->
+  <!-- ═══════════════════════════════════════════
+       SIDEBAR CARRITO
+  ═══════════════════════════════════════════ -->
   <aside id="carrito-sidebar">
     <div class="carrito-header">
-      <h3>🛒 Mi Carrito</h3>
-      <button class="cerrar-carrito" onclick="cerrarCarrito()">✖</button>
+      <div class="carrito-titulo-wrap">
+        <span class="carrito-icon">⬡</span>
+        <h3>MI CARRITO</h3>
+      </div>
+      <button class="cerrar-carrito" onclick="cerrarCarrito()">✕</button>
     </div>
     <div id="carrito-items"></div>
     <div class="carrito-footer">
       <div class="carrito-total">
-        <span>Total:</span>
+        <span>TOTAL ESTIMADO</span>
         <span id="carrito-total-valor">$0</span>
       </div>
-      <button class="btn-checkout" onclick="abrirCheckout()">Finalizar compra</button>
+      <button class="btn-checkout glow-btn" onclick="abrirCheckout()">
+        FINALIZAR COMPRA <span class="btn-arrow">→</span>
+      </button>
     </div>
   </aside>
 
-  <!-- MODAL CHECKOUT -->
-  <div id="modal-checkout" class="modal">
-    <div class="modal-contenido checkout-contenido">
-      <button class="cerrar" onclick="cerrarCheckout()">✖</button>
-      <h2>📋 Datos de entrega</h2>
-      <p class="checkout-sub">Completa tu información para confirmar el pedido</p>
-      <form id="form-checkout">
-        <input type="text"  name="co_nombre"    placeholder="Nombre completo"   required>
-        <input type="tel"   name="co_telefono"  placeholder="Teléfono"          required>
-        <input type="email" name="co_email"     placeholder="Correo electrónico" required>
-        <input type="text"  name="co_ciudad"    placeholder="Ciudad"            required>
-        <input type="text"  name="co_direccion" placeholder="Dirección"         required>
-        <textarea name="co_nota" placeholder="Nota adicional (opcional)" rows="3"></textarea>
-        <div id="checkout-resumen"></div>
-        <button type="submit" class="btn-confirmar">✅ Confirmar pedido</button>
+  <!-- ═══════════════════════════════════════════
+       MODAL TEST RIDE
+  ═══════════════════════════════════════════ -->
+  <div id="modal-testride" class="modal">
+    <div class="modal-contenido checkout-contenido testride-contenido">
+      <button class="cerrar" onclick="cerrarTestRide()">✕</button>
+      <div class="modal-badge-top">TEST RIDE</div>
+      <h2>PRUEBA DE MANEJO</h2>
+      <p class="checkout-sub">Agenda tu experiencia en pista antes de comprar</p>
+      <form id="form-testride">
+        <div class="form-group">
+          <label>NOMBRE COMPLETO</label>
+          <input type="text" name="tr_nombre" placeholder="Ej: Carlos Rodríguez" required>
+        </div>
+        <div class="form-group">
+          <label>DOCUMENTO DE IDENTIDAD</label>
+          <input type="text" name="tr_documento" placeholder="Cédula o pasaporte" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>TELÉFONO</label>
+            <input type="tel" name="tr_telefono" placeholder="+57 300..." required>
+          </div>
+          <div class="form-group">
+            <label>EMAIL</label>
+            <input type="email" name="tr_email" placeholder="correo@email.com" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>MOTO SELECCIONADA</label>
+          <input type="text" name="tr_moto" id="tr_moto_input" readonly>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>FECHA DESEADA</label>
+            <input type="date" name="tr_fecha" required>
+          </div>
+          <div class="form-group">
+            <label>HORA DESEADA</label>
+            <select name="tr_hora" required>
+              <option value="">Seleccionar</option>
+              <option>08:00 AM</option><option>09:00 AM</option>
+              <option>10:00 AM</option><option>11:00 AM</option>
+              <option>02:00 PM</option><option>03:00 PM</option>
+              <option>04:00 PM</option><option>05:00 PM</option>
+            </select>
+          </div>
+        </div>
+        <button type="submit" class="btn-confirmar glow-btn">AGENDAR TEST RIDE →</button>
       </form>
+      <div class="testride-footer-note">* Requiere licencia de conducción vigente. Cupo limitado.</div>
     </div>
   </div>
 
-  <!-- MODAL CONFIRMACIÓN ANIMADA -->
+  <!-- ═══════════════════════════════════════════
+       MODAL CHECKOUT PREMIUM (con métodos de pago)
+  ═══════════════════════════════════════════ -->
+  <div id="modal-checkout" class="modal">
+    <div class="modal-contenido checkout-contenido checkout-premium">
+      <button class="cerrar" onclick="cerrarCheckout()">✕</button>
+
+      <!-- STEP 1: DATOS -->
+      <div id="checkout-step-1" class="checkout-step active">
+        <div class="modal-badge-top">PASO 1 / 3</div>
+        <h2>DATOS DE ENTREGA</h2>
+        <p class="checkout-sub">Completa tu información de contacto</p>
+        <form id="form-checkout-datos">
+          <div class="form-row">
+            <div class="form-group">
+              <label>NOMBRE COMPLETO</label>
+              <input type="text" name="co_nombre" placeholder="Tu nombre" required>
+            </div>
+            <div class="form-group">
+              <label>TELÉFONO</label>
+              <input type="tel" name="co_telefono" placeholder="+57 300..." required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>CORREO ELECTRÓNICO</label>
+            <input type="email" name="co_email" placeholder="correo@email.com" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>CIUDAD</label>
+              <input type="text" name="co_ciudad" placeholder="Ciudad" required>
+            </div>
+            <div class="form-group">
+              <label>DIRECCIÓN</label>
+              <input type="text" name="co_direccion" placeholder="Dirección" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>NOTA ADICIONAL</label>
+            <textarea name="co_nota" placeholder="Instrucciones especiales..." rows="2"></textarea>
+          </div>
+          <div id="checkout-resumen"></div>
+          <button type="submit" class="btn-confirmar glow-btn">CONTINUAR AL PAGO →</button>
+        </form>
+      </div>
+
+      <!-- STEP 2: MÉTODO DE PAGO -->
+      <div id="checkout-step-2" class="checkout-step">
+        <div class="modal-badge-top">PASO 2 / 3</div>
+        <h2>MÉTODO DE PAGO</h2>
+        <p class="checkout-sub">Elige cómo quieres pagar</p>
+
+        <div class="payment-methods">
+          <label class="payment-option" data-method="tarjeta-debito">
+            <input type="radio" name="metodo_pago" value="tarjeta-debito">
+            <div class="payment-card">
+              <span class="payment-icon">💳</span>
+              <div><strong>Tarjeta Débito</strong><small>Pago inmediato</small></div>
+            </div>
+          </label>
+          <label class="payment-option" data-method="tarjeta-credito">
+            <input type="radio" name="metodo_pago" value="tarjeta-credito">
+            <div class="payment-card">
+              <span class="payment-icon">💳</span>
+              <div><strong>Tarjeta Crédito</strong><small>Hasta 36 cuotas</small></div>
+            </div>
+          </label>
+          <label class="payment-option" data-method="transferencia">
+            <input type="radio" name="metodo_pago" value="transferencia">
+            <div class="payment-card">
+              <span class="payment-icon">🏦</span>
+              <div><strong>Transferencia Bancaria</strong><small>PSE / Nequi</small></div>
+            </div>
+          </label>
+          <label class="payment-option" data-method="contraentrega">
+            <input type="radio" name="metodo_pago" value="contraentrega">
+            <div class="payment-card">
+              <span class="payment-icon">🏍️</span>
+              <div><strong>Pago Contra Entrega</strong><small>Al recibir la moto</small></div>
+            </div>
+          </label>
+          <label class="payment-option" data-method="financiacion">
+            <input type="radio" name="metodo_pago" value="financiacion">
+            <div class="payment-card">
+              <span class="payment-icon">📊</span>
+              <div><strong>Financiación</strong><small>Simula tu cuota</small></div>
+            </div>
+          </label>
+        </div>
+
+        <!-- FORMULARIO TARJETA -->
+        <div id="form-tarjeta" class="payment-form hidden">
+          <div class="card-visual" id="card-visual">
+            <div class="card-chip">▬▬</div>
+            <div class="card-number-display" id="card-number-display">•••• •••• •••• ••••</div>
+            <div class="card-footer-display">
+              <span id="card-holder-display">NOMBRE TITULAR</span>
+              <span id="card-exp-display">MM/AA</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>NOMBRE DEL TITULAR</label>
+            <input type="text" id="card-holder" placeholder="Como aparece en la tarjeta" maxlength="26">
+          </div>
+          <div class="form-group">
+            <label>NÚMERO DE TARJETA</label>
+            <input type="text" id="card-number" placeholder="0000 0000 0000 0000" maxlength="19">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>VENCIMIENTO</label>
+              <input type="text" id="card-exp" placeholder="MM/AA" maxlength="5">
+            </div>
+            <div class="form-group">
+              <label>CVV</label>
+              <input type="text" id="card-cvv" placeholder="•••" maxlength="3">
+            </div>
+          </div>
+        </div>
+
+        <!-- SIMULADOR FINANCIACIÓN -->
+        <div id="form-financiacion" class="payment-form hidden">
+          <div class="simulador-wrap">
+            <h4 class="sim-titulo">SIMULADOR DE CUOTAS</h4>
+            <div class="sim-total-label">Total a financiar: <strong id="sim-total">$0</strong></div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>CUOTA INICIAL (%)</label>
+                <input type="range" id="sim-inicial-pct" min="10" max="50" step="5" value="20">
+                <span id="sim-inicial-val">20% — $0</span>
+              </div>
+              <div class="form-group">
+                <label>NÚMERO DE CUOTAS</label>
+                <select id="sim-cuotas">
+                  <option value="12">12 meses</option>
+                  <option value="24" selected>24 meses</option>
+                  <option value="36">36 meses</option>
+                  <option value="48">48 meses</option>
+                  <option value="60">60 meses</option>
+                </select>
+              </div>
+            </div>
+            <div class="sim-resultado">
+              <div class="sim-box"><span>Tasa mensual</span><strong>1.8%</strong></div>
+              <div class="sim-box accent"><span>CUOTA MENSUAL</span><strong id="sim-cuota">$0</strong></div>
+              <div class="sim-box"><span>Total con intereses</span><strong id="sim-total-int">$0</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="checkout-step-btns">
+          <button class="btn-secundario-outline" onclick="irCheckoutStep(1)">← ATRÁS</button>
+          <button class="btn-confirmar glow-btn" onclick="irCheckoutStep(3)">CONFIRMAR →</button>
+        </div>
+      </div>
+
+      <!-- STEP 3: RESUMEN FINAL -->
+      <div id="checkout-step-3" class="checkout-step">
+        <div class="modal-badge-top">PASO 3 / 3</div>
+        <h2>CONFIRMACIÓN</h2>
+        <p class="checkout-sub">Revisa tu pedido antes de confirmar</p>
+        <div id="resumen-final"></div>
+        <div class="checkout-step-btns">
+          <button class="btn-secundario-outline" onclick="irCheckoutStep(2)">← ATRÁS</button>
+          <button class="btn-confirmar glow-btn" onclick="procesarPedido()">PAGAR Y CONFIRMAR →</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       MODAL CONFIRMACIÓN ANIMADA
+  ═══════════════════════════════════════════ -->
   <div id="modal-confirmacion" class="modal">
     <div class="modal-contenido confirmacion-contenido">
       <div class="confetti-wrap" id="confetti-wrap"></div>
+      <div class="confirm-glow-ring"></div>
       <div class="check-circle">
         <svg viewBox="0 0 52 52" class="check-svg">
           <circle class="check-circulo" cx="26" cy="26" r="25" fill="none"/>
-          <path   class="check-marca"   fill="none" d="M14 27 l8 8 16-16"/>
+          <path class="check-marca" fill="none" d="M14 27 l8 8 16-16"/>
         </svg>
       </div>
-      <h2 class="confirmacion-titulo">¡Pedido confirmado!</h2>
-      <p class="confirmacion-sub">Gracias por tu compra. Un asesor de <strong>SuperBikeSBK</strong> se pondrá en contacto contigo pronto.</p>
-      <button onclick="cerrarConfirmacion()">Volver al catálogo</button>
+      <div class="orden-badge" id="orden-badge"></div>
+      <h2 class="confirmacion-titulo">ORDEN CONFIRMADA</h2>
+      <p class="confirmacion-sub">Tu pedido fue procesado exitosamente. Un asesor de <strong>SuperBikeSBK</strong> te contactará pronto.</p>
+      <div id="confirmacion-detalles" class="confirmacion-detalles"></div>
+      <button onclick="cerrarConfirmacion()" class="glow-btn">VOLVER AL SHOWROOM</button>
     </div>
   </div>
 
-  <!-- MODAL DETALLES / GALERÍA -->
+  <!-- ═══════════════════════════════════════════
+       MODAL DETALLES / GALERÍA
+  ═══════════════════════════════════════════ -->
   <div id="modal" class="modal">
     <div class="modal-contenido">
-
-      <!-- Botón cerrar — esquina superior derecha -->
-      <button class="cerrar" onclick="cerrarModal()">✖</button>
-
-      <!-- Columna izquierda: imagen + galería -->
+      <button class="cerrar" onclick="cerrarModal()">✕</button>
       <div class="modal-col-img">
         <button class="galeria-btn galeria-prev" onclick="galeriaNav(-1)">&#8592;</button>
         <img id="modal-img" alt="Foto de la moto">
         <button class="galeria-btn galeria-next" onclick="galeriaNav(1)">&#8594;</button>
         <div class="galeria-dots" id="galeria-dots"></div>
+        <div class="modal-img-scanlines"></div>
       </div>
-
-      <!-- Columna derecha: info + specs + botones -->
       <div class="modal-col-info">
+        <div class="modal-marca-badge" id="modal-marca-badge"></div>
         <h2 id="modal-nombre"></h2>
+        <div class="modal-disponibilidad"><span class="dot-green"></span> DISPONIBLE</div>
         <h3 id="modal-precio"></h3>
         <div class="specs-grid" id="modal-specs"></div>
         <div class="modal-acciones">
-          <button class="btn-comprar" onclick="agregarAlCarrito(motoActual)">🛒 Agregar al carrito</button>
-          <button class="btn-comparar-modal" onclick="toggleComparador(motoActual)">⚖️ Comparar</button>
+          <button class="btn-comprar glow-btn" onclick="iniciarCompra(motoActual)">🛒 COMPRAR</button>
+          <button class="btn-testride-modal" onclick="abrirTestRide(motoActual)">🏁 TEST RIDE</button>
+          <button class="btn-comparar-modal" onclick="toggleComparador(motoActual)">⚖️ COMPARAR</button>
         </div>
       </div>
-
     </div>
   </div>
 
-  <!-- BARRA COMPARADOR -->
+  <!-- ═══════════════════════════════════════════
+       BARRA COMPARADOR
+  ═══════════════════════════════════════════ -->
   <div id="comparador-barra" class="comparador-barra">
-    <span class="comp-titulo">⚖️ Comparador</span>
+    <span class="comp-titulo">⚖️ COMPARADOR</span>
     <div id="comp-slots">
-      <div class="comp-slot" id="comp-slot-0"><span class="comp-empty">+ Moto 1</span></div>
-      <div class="comp-slot" id="comp-slot-1"><span class="comp-empty">+ Moto 2</span></div>
+      <div class="comp-slot" id="comp-slot-0"><span class="comp-empty">+ MOTO 1</span></div>
+      <div class="comp-slot" id="comp-slot-1"><span class="comp-empty">+ MOTO 2</span></div>
     </div>
-    <button class="btn-ver-comparador" onclick="abrirComparadorModal()" id="btn-ver-comp" disabled>Ver comparación</button>
-    <button class="btn-limpiar-comp" onclick="limpiarComparador()">✖</button>
+    <button class="btn-ver-comparador" onclick="abrirComparadorModal()" id="btn-ver-comp" disabled>VER COMPARACIÓN</button>
+    <button class="btn-limpiar-comp" onclick="limpiarComparador()">✕</button>
   </div>
 
-  <!-- MODAL COMPARADOR -->
+  <!-- ═══════════════════════════════════════════
+       MODAL COMPARADOR
+  ═══════════════════════════════════════════ -->
   <div id="modal-comparador" class="modal">
     <div class="modal-contenido comparador-contenido">
-      <button class="cerrar" onclick="cerrarComparadorModal()">✖</button>
-      <h2 class="comp-modal-titulo">⚖️ Comparación</h2>
+      <button class="cerrar" onclick="cerrarComparadorModal()">✕</button>
+      <h2 class="comp-modal-titulo">COMPARACIÓN TÉCNICA</h2>
       <div id="tabla-comparador"></div>
     </div>
   </div>
 
-  <!-- HEADER -->
-  <header>
-    <div class="header-inner">
+  <!-- ═══════════════════════════════════════════
+       HEADER
+  ═══════════════════════════════════════════ -->
+  <header id="main-header">
+    <div class="header-left">
       <div class="logo-block">
         <span class="logo-accent">SUPER</span><span class="logo-main">BIKE</span><span class="logo-sbk">SBK</span>
       </div>
-      <p class="header-sub">Concesionario de motocicletas deportivas</p>
+      <p class="header-sub">// HIGH PERFORMANCE MOTORCYCLES</p>
     </div>
     <div class="header-actions">
+      <button class="btn-testrides-count" onclick="verTestruides()" id="btn-tr-count" title="Mis Test Rides">🏁 <span id="tr-count">0</span></button>
       <button class="btn-tema" id="btn-tema" onclick="toggleTema()" title="Cambiar tema">🌙</button>
       <button class="btn-carrito-header" onclick="abrirCarrito()">
-        🛒 <span id="carrito-count">0</span>
+        🛒 <span id="carrito-count" class="cart-badge-num">0</span>
       </button>
     </div>
   </header>
 
-  <nav>
-    <a href="#">Inicio</a>
-    <a href="#catalogo">Catálogo</a>
-    <a href="#contacto">Contacto</a>
+  <!-- ═══════════════════════════════════════════
+       NAV
+  ═══════════════════════════════════════════ -->
+  <nav id="main-nav">
+    <div class="nav-inner">
+      <a href="#" class="nav-link">
+        <span class="nav-num">01</span>INICIO
+      </a>
+      <a href="#catalogo" class="nav-link">
+        <span class="nav-num">02</span>CATÁLOGO
+      </a>
+      <a href="#contacto" class="nav-link">
+        <span class="nav-num">03</span>CONTACTO
+      </a>
+    </div>
+    <div class="nav-line-anim"></div>
   </nav>
 
+  <!-- ═══════════════════════════════════════════
+       HERO
+  ═══════════════════════════════════════════ -->
   <section class="hero">
+    <div class="hero-noise"></div>
+    <div class="hero-grid-overlay"></div>
+    <div class="hero-bg-word">SBK</div>
+
     <div class="hero-content reveal">
-      <h2>Las Superbikes más rápidas del mercado</h2>
-      <p class="hero-sub">Potencia, velocidad y adrenalina pura</p>
+      <div class="hero-eyebrow">// VELOCIDAD PURA — TECNOLOGÍA DE COMPETICIÓN</div>
+      <h1 class="hero-title">
+        LAS<br>
+        <em class="hero-accent">SUPERBIKES</em><br>
+        MÁS RÁPIDAS
+      </h1>
+      <p class="hero-sub">Potencia · Velocidad · Adrenalina</p>
+      <div class="hero-ctas">
+        <a href="#catalogo" class="hero-cta-primary glow-btn">VER CATÁLOGO <span>→</span></a>
+        <a href="#contacto" class="hero-cta-secondary">CONTACTAR ASESOR</a>
+      </div>
+    </div>
+
+    <div class="hero-stats reveal">
+      <div class="stat-item">
+        <span class="stat-num" data-target="10">0</span>
+        <span class="stat-label">MODELOS</span>
+      </div>
+      <div class="stat-sep">|</div>
+      <div class="stat-item">
+        <span class="stat-num" data-target="5">0</span>
+        <span class="stat-label">MARCAS</span>
+      </div>
+      <div class="stat-sep">|</div>
+      <div class="stat-item">
+        <span class="stat-num" data-target="217">0</span>
+        <span class="stat-label">CV MÁX</span>
+      </div>
+      <div class="stat-sep">|</div>
+      <div class="stat-item">
+        <span class="stat-num" data-target="100">0</span>
+        <span class="stat-label">% GARANTÍA</span>
+      </div>
+    </div>
+
+    <div class="hero-scroll-hint">
+      <div class="scroll-line"></div>
+      <span>SCROLL</span>
     </div>
   </section>
 
+  <!-- ═══════════════════════════════════════════
+       CATÁLOGO
+  ═══════════════════════════════════════════ -->
   <section class="container">
     <div class="section-header reveal">
-      <h2 id="catalogo">Catálogo</h2>
+      <div class="section-eyebrow">// CATÁLOGO</div>
+      <h2 id="catalogo">NUESTROS MODELOS</h2>
       <div class="section-line"></div>
     </div>
 
     <div class="filtros-wrap reveal">
-      <input type="text" id="buscar" placeholder="🔍 Buscar moto...">
+      <div class="filtros-top-row">
+        <div class="search-box">
+          <span class="search-ico">⌕</span>
+          <input type="text" id="buscar" placeholder="Buscar modelo...">
+        </div>
+        <div class="ordenar-wrap">
+          <select id="ordenar">
+            <option value="default">ORDENAR</option>
+            <option value="asc">PRECIO ↑</option>
+            <option value="desc">PRECIO ↓</option>
+            <option value="az">A → Z</option>
+          </select>
+        </div>
+      </div>
 
       <div class="filtros-marcas" id="filtros-marcas">
-        <button class="filtro-btn activo" data-marca="todos">Todas</button>
-        <button class="filtro-btn" data-marca="Yamaha">Yamaha</button>
-        <button class="filtro-btn" data-marca="Kawasaki">Kawasaki</button>
-        <button class="filtro-btn" data-marca="BMW">BMW</button>
-        <button class="filtro-btn" data-marca="Ducati">Ducati</button>
-        <button class="filtro-btn" data-marca="Honda">Honda</button>
+        <button class="filtro-btn activo" data-marca="todos">TODAS</button>
       </div>
 
       <div class="filtros-fila">
         <div class="filtro-precio">
-          <label>Precio máximo: <strong id="precio-label">$200,000,000</strong></label>
+          <label>PRECIO MÁXIMO: <strong id="precio-label">$200,000,000</strong></label>
           <input type="range" id="slider-precio" min="60000000" max="200000000" step="5000000" value="200000000">
-        </div>
-        <div class="ordenar-wrap">
-          <label>Ordenar por:</label>
-          <select id="ordenar">
-            <option value="default">Predeterminado</option>
-            <option value="asc">Precio: menor a mayor</option>
-            <option value="desc">Precio: mayor a menor</option>
-            <option value="az">Nombre: A → Z</option>
-          </select>
         </div>
       </div>
     </div>
@@ -190,24 +473,61 @@
     <div class="grid" id="motos"></div>
   </section>
 
-  <section class="container">
-    <div class="section-header reveal">
-      <h2 id="contacto">Contacto</h2>
-      <div class="section-line"></div>
+  <!-- ═══════════════════════════════════════════
+       CONTACTO
+  ═══════════════════════════════════════════ -->
+  <section class="contacto-section">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-eyebrow">// CONTACTO</div>
+        <h2 id="contacto">HABLEMOS</h2>
+        <div class="section-line"></div>
+      </div>
+      <div class="contacto-grid">
+        <div class="contacto-info reveal">
+          <p class="contacto-desc">¿Listo para tu próxima superbike? Un asesor especializado te contactará en menos de 24 horas.</p>
+          <div class="contacto-datos">
+            <div class="dato-item"><span>📍</span>Cartagena, Colombia</div>
+            <div class="dato-item"><span>📞</span>+57 300 000 0000</div>
+            <div class="dato-item"><span>✉️</span>info@superbikeskb.com</div>
+            <div class="dato-item"><span>🕐</span>Lun–Sáb · 8AM – 6PM</div>
+          </div>
+        </div>
+        <form id="formulario" class="contacto-form reveal">
+          <div class="form-group">
+            <label>NOMBRE</label>
+            <input type="text" name="nombre" placeholder="Tu nombre completo" required>
+          </div>
+          <div class="form-group">
+            <label>CORREO ELECTRÓNICO</label>
+            <input type="email" name="email" placeholder="correo@email.com" required>
+          </div>
+          <div class="form-group">
+            <label>MENSAJE</label>
+            <textarea name="mensaje" placeholder="¿En qué podemos ayudarte?" rows="4"></textarea>
+          </div>
+          <button type="submit" class="glow-btn">ENVIAR MENSAJE →</button>
+        </form>
+      </div>
     </div>
-    <form id="formulario" class="reveal">
-      <input type="text"  name="nombre"  placeholder="Nombre"             required>
-      <input type="email" name="email"   placeholder="Correo electrónico" required>
-      <textarea name="mensaje" placeholder="Mensaje" rows="4"></textarea>
-      <button type="submit">Enviar mensaje</button>
-    </form>
   </section>
 
+  <!-- ═══════════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════════ -->
   <footer class="reveal">
-    <p>© 2026 <strong>SuperBikeSBK</strong> &mdash; Jose Berrocal &amp; Franklin Lloreda</p>
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <span class="logo-accent">SUPER</span><span class="logo-main">BIKE</span><span class="logo-sbk">SBK</span>
+      </div>
+      <p class="footer-copy">© 2026 SuperBikeSBK — Franklin Lloreda &amp; Jose Berrocal</p>
+      <div class="footer-rule"></div>
+    </div>
   </footer>
 
-  <button id="btn-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Volver arriba">▲</button>
+  <!-- MISC UI -->
+  <button id="btn-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+  <div id="toast-container"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@2/dist/email.min.js"></script>
   <script src="script.js"></script>
