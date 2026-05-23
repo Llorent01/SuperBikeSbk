@@ -134,42 +134,6 @@ const motos = [
     precio: '60,000,000', precioNum: 60000000, badge: null,
     imagenes: ['img/990/990_1.jpg', 'img/990/990_2.jpg', 'img/990/990_3.jpg', 'img/990/990_4.jpg', 'img/990/990_5.jpg', 'img/990/990_6.jpg', 'img/990/990_7.jpg', 'img/990/990_8.jpg', 'img/990/990_9.jpg', 'img/990/990_10.jpg', 'img/990/990_11.jpg'],
     detalles: { cilindrada:'', potencia:'', torque:'', peso:'', motor:'' }
-  },
-  {
-    nombre: '', marca: '',
-    precio: '', precioNum: 0, badge: null,
-    imagenes: [''],
-    detalles: { cilindrada:'', potencia:'', torque:'', peso:'', motor:'' }
-  },
-  {
-    nombre: '', marca: '',
-    precio: '', precioNum: 0, badge: null,
-    imagenes: [''],
-    detalles: { cilindrada:'', potencia:'', torque:'', peso:'', motor:'' }
-  },
-  {
-    nombre: '', marca: '',
-    precio: '', precioNum: 0, badge: null,
-    imagenes: [''],
-    detalles: { cilindrada:'', potencia:'', torque:'', peso:'', motor:'' }
-  },
-  {
-    nombre: '', marca: '',
-    precio: '', precioNum: 0, badge: null,
-    imagenes: [''],
-    detalles: { cilindrada:'', potencia:'', torque:'', peso:'', motor:'' }
-  },
-  {
-    nombre: '', marca: '',
-    precio: '', precioNum: 0, badge: null,
-    imagenes: [''],
-    detalles: { cilindrada:'', potencia:'', torque:'', peso:'', motor:'' }
-  },
-  {
-    nombre: '', marca: '',
-    precio: '', precioNum: 0, badge: null,
-    imagenes: [''],
-    detalles: { cilindrada:'', potencia:'', torque:'', peso:'', motor:'' }
   }
 ];
 
